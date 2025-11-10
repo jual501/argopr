@@ -19,7 +19,7 @@ spec:
           ports:
             - containerPort: 80
 
-          # Env vars from Secret (creates $hello)a
+          # Env vars from Secret (creates $hello)aa
           envFrom:
             - secretRef:
                 name: app-secret
