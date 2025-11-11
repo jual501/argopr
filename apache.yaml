@@ -26,7 +26,7 @@ metadata:
   labels:
     app: apache
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels: { app: apache }
   template:
