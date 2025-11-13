@@ -4,7 +4,7 @@ metadata:
   name: apache
   namespace: apache
 spec:
-  replicas: 1
+  replicas: 6
   selector:
     matchLabels:
       app: apache
