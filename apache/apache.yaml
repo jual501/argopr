@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apache-dev
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache-index
+  namespace: apache-dev
+data:
+  index.html: |
+    <html>
+      <head><title>Apache - DEV</title></head>
+      <body style="font-family: sans-serif;">
+        <h1>Apache - DEV</h1>
+        <p>This is the <b>DEV</b> environment.</p>
+      </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache
+  namespace: apache-dev
+  labels:
+    app: apache
+spec:
+  replicas: 5
+  selector:
+    matchLabels: { app: apache }
+  template:
+    metadata:
+      labels: { app: apache, env: dev }
+    spec:
+      containers:
+        - name: httpd
+          image: httpd:2.4.59
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: "/", port: 80 }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: html
+              mountPath: /usr/local/apache2/htdocs/index.html
+              subPath: index.html
+      volumes:
+        - name: html
+          configMap:
+            name: apache-index
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache
+  namespace: apache-dev
+  labels: { app: apache }
+spec:
+  type: ClusterIP
+  selector: { app: apache }
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
